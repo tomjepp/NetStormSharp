@@ -3,16 +3,38 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetStormSharp", "NetStormSharp\NetStormSharp.csproj", "{E7CB1222-5224-461D-817B-2CEA209DE52A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{3982C715-1E87-40A1-9A73-AF8BD320B1BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E7CB1222-5224-461D-817B-2CEA209DE52A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E7CB1222-5224-461D-817B-2CEA209DE52A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7CB1222-5224-461D-817B-2CEA209DE52A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E7CB1222-5224-461D-817B-2CEA209DE52A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E7CB1222-5224-461D-817B-2CEA209DE52A}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{E7CB1222-5224-461D-817B-2CEA209DE52A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7CB1222-5224-461D-817B-2CEA209DE52A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7CB1222-5224-461D-817B-2CEA209DE52A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E7CB1222-5224-461D-817B-2CEA209DE52A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E7CB1222-5224-461D-817B-2CEA209DE52A}.Release|x86.ActiveCfg = Release|Any CPU
+		{3982C715-1E87-40A1-9A73-AF8BD320B1BF}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{3982C715-1E87-40A1-9A73-AF8BD320B1BF}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{3982C715-1E87-40A1-9A73-AF8BD320B1BF}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{3982C715-1E87-40A1-9A73-AF8BD320B1BF}.Debug|x86.ActiveCfg = Debug|x86
+		{3982C715-1E87-40A1-9A73-AF8BD320B1BF}.Debug|x86.Build.0 = Debug|x86
+		{3982C715-1E87-40A1-9A73-AF8BD320B1BF}.Release|Any CPU.ActiveCfg = Release|x86
+		{3982C715-1E87-40A1-9A73-AF8BD320B1BF}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{3982C715-1E87-40A1-9A73-AF8BD320B1BF}.Release|Mixed Platforms.Build.0 = Release|x86
+		{3982C715-1E87-40A1-9A73-AF8BD320B1BF}.Release|x86.ActiveCfg = Release|x86
+		{3982C715-1E87-40A1-9A73-AF8BD320B1BF}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
