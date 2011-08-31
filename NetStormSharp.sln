@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetStormSharp", "NetStormSharp\NetStormSharp.csproj", "{E7CB1222-5224-461D-817B-2CEA209DE52A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E7CB1222-5224-461D-817B-2CEA209DE52A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7CB1222-5224-461D-817B-2CEA209DE52A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7CB1222-5224-461D-817B-2CEA209DE52A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7CB1222-5224-461D-817B-2CEA209DE52A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
