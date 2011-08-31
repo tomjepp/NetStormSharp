@@ -6,6 +6,20 @@ namespace NetStormSharp
 {
     public static class Utility
     {
+        public static void XorCryptBytes(ref byte[] data, byte[] key)
+        {
+            int keyIndex = 0;
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (keyIndex == key.Length)
+                    keyIndex = 0;
+
+                data[i] = (byte)(data[i] ^ key[keyIndex]);
+
+                keyIndex++;
+            }
+        }
+
         public static bool CompareBytes(byte[] array1, byte[] array2)
         {
             if (array1 == null || array2 == null)

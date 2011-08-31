@@ -10,7 +10,7 @@ namespace NetStormSharp.TitanArc
         public UInt32 Offset;
 
         [FieldOffset(0x04)]
-        public UInt32 Length;
+        public Int32 Length;
 
         [FieldOffset(0x08)]
         [MarshalAs(UnmanagedType.LPStr)]

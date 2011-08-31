@@ -8,6 +8,7 @@ namespace NetStormSharp
 {
     public static class StreamHelpers
     {
+        #region Struct helpers
         public static T ReadStruct<T>(this Stream stream)
         {
             byte[] data = new byte[Marshal.SizeOf(typeof(T))];
@@ -21,14 +22,27 @@ namespace NetStormSharp
             stream.Read(data, 0, data.Length);
             return Utility.ReadStruct<T>(data, length);
         }
+        #endregion
 
+        #region Signed integer helpers
+        public static Int32 ReadInt32(this Stream stream)
+        {
+            byte[] data = new byte[4];
+            stream.Read(data, 0, 4);
+            return BitConverter.ToInt32(data, 0);
+        }
+        #endregion
+
+        #region Unsigned integer helpers
         public static UInt32 ReadUInt32(this Stream stream)
         {
             byte[] data = new byte[4];
             stream.Read(data, 0, 4);
             return BitConverter.ToUInt32(data, 0);
         }
+        #endregion
 
+        #region String helpers
         public static string ReadAsciiNullTerminatedString(this Stream stream)
         {
             StringBuilder sb = new StringBuilder();
@@ -41,5 +55,6 @@ namespace NetStormSharp
                     sb.Append(c);
             }
         }
+        #endregion
     }
 }
