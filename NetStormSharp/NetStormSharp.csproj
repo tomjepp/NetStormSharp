@@ -41,7 +41,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StreamHelpers.cs" />
+    <Compile Include="TitanArc\EncryptionType.cs" />
     <Compile Include="TitanArc\TarcFile.cs" />
+    <Compile Include="TitanArc\TarcFileEntry.cs" />
+    <Compile Include="TitanArc\TarcHeader.cs" />
+    <Compile Include="Utility.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
