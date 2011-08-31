@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 
 using NetStormSharp.TitanArc;
+using NetStormSharp.Shapes;
 
 namespace TestApp
 {
@@ -14,7 +15,11 @@ namespace TestApp
         {
             using (FileStream fs = new FileStream(@"D:\Gaming\NetStorm\NetStorm\tarcExtract\netstorm.tarc", FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                TarcFile tarc = new TarcFile(fs);
+                using (TarcFile tarc = new TarcFile(fs))
+                {
+                    Palette palette = new Palette(tarc.GetStream(@"\d\raincannon.col"));
+                    
+                }
             }
 
             Console.ReadLine();
