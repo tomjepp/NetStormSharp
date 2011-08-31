@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace NetStormSharp
 {
@@ -22,6 +21,16 @@ namespace NetStormSharp
             }
 
             return true;
+        }
+
+        public static T ReadStruct<T>(byte[] data, int length)
+        {
+            IntPtr ptr = Marshal.AllocHGlobal(length);
+            Marshal.Copy(data, 0, ptr, length);
+            T structInstance = (T)Marshal.PtrToStructure(ptr, typeof(T));
+            Marshal.FreeHGlobal(ptr);
+
+            return structInstance;
         }
     }
 }
