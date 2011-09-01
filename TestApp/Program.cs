@@ -13,13 +13,10 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            using (FileStream fs = new FileStream(@"D:\Gaming\NetStorm\NetStorm\tarcExtract\netstorm.tarc", FileMode.Open, FileAccess.Read, FileShare.Read))
+            Console.BufferHeight = Int16.MaxValue-1;
+            using (FileStream fs = new FileStream(@"C:\NetStorm\d\_shapes - Copy.shp", FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                using (TarcFile tarc = new TarcFile(fs))
-                {
-                    Palette palette = new Palette(tarc.GetStream(@"\d\raincannon.col"));
-                    
-                }
+                ShapeFile shapes = new ShapeFile(fs);
             }
 
             Console.ReadLine();

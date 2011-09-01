@@ -44,6 +44,9 @@
     <Compile Include="Shapes\Palette.cs" />
     <Compile Include="Shapes\PaletteColor.cs" />
     <Compile Include="Shapes\PaletteHeader.cs" />
+    <Compile Include="Shapes\SectionHeader.cs" />
+    <Compile Include="Shapes\SectionElement.cs" />
+    <Compile Include="Shapes\ShapeFile.cs" />
     <Compile Include="StreamHelpers.cs" />
     <Compile Include="TitanArc\EncryptionType.cs" />
     <Compile Include="TitanArc\TarcFile.cs" />
