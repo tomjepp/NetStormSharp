@@ -14,32 +14,25 @@ namespace TestApp
     {
         static void Main(string[] args)
         {
-            Console.BufferHeight = Int16.MaxValue - 1;
-            ShapeFile shapeFile = null;
-            using (FileStream fs = new FileStream(@"C:\NetStorm\d\_shapes.shp", FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                shapeFile = new ShapeFile(fs);
-            }
+//            Console.BufferHeight = Int16.MaxValue - 1;
 
-            Dictionary<string, Palette> palettes = new Dictionary<string, Palette>();
+            Palette palette = null;
             using (FileStream fs = new FileStream(@"C:\NetStorm\netstorm.tarc", FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 TarcFile tarcFile = new TarcFile(fs);
-                foreach (TarcFileEntry file in tarcFile.Files)
+                using (Stream stream = tarcFile.GetStream(@"\d\!color.dat"))
                 {
-                    if (file.Filename.ToLower().EndsWith(".col"))
-                    {
-                        string fileName = Path.GetFileName(file.Filename);
-
-                        Palette palette = new Palette(tarcFile.GetStream(file.Filename), fileName);
-                        palettes.Add(fileName, palette);
-                    }
+                    palette = new Palette(stream);
                 }
             }
             Application.SetCompatibleTextRenderingDefault(false);
             Application.EnableVisualStyles();
-            ShapeViewer viewer = new ShapeViewer(shapeFile, palettes);
-            Application.Run(viewer);
+            using (FileStream fs = new FileStream(@"C:\NetStorm\d\_shapes.shp", FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                ShapeFile shapeFile = new ShapeFile(fs);
+                ShapeViewer viewer = new ShapeViewer(shapeFile, palette);
+                Application.Run(viewer);
+            }
 
             Console.ReadLine();
         }

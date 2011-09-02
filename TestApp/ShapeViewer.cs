@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
@@ -13,77 +13,103 @@ namespace TestApp
 {
     public partial class ShapeViewer : Form
     {
-        public ShapeViewer(ShapeFile shapeFile, Dictionary<string, Palette> palettes)
+        private ShapeFile ShapeFile;
+        private Palette Palette;
+
+        public ShapeViewer(ShapeFile shapeFile, Palette palette)
         {
             InitializeComponent();
 
-            foreach (string filename in palettes.Keys)
-            {
-                PaletteList.Items.Add(palettes[filename]);
-            }
+            Palette = palette;
+            ShapeFile = shapeFile;
 
-            int headerId = 0;
-            foreach (SectionHeader header in shapeFile.Shapes.Keys)
+            for (int i = 0; i < shapeFile.Sections.Count; i++)
             {
-                TreeNode sectionNode = new TreeNode(String.Format("Section {0}", headerId));
+                Section section = shapeFile.Sections[i];
+
+                TreeNode sectionNode = new TreeNode(String.Format("Section {0}", i));
                 ShapeTree.Nodes.Add(sectionNode);
 
-                int elementId = 0;
-                foreach (SectionElement element in shapeFile.Shapes[header].Keys)
+                for (int j = 0; j < section.Shapes.Count; j++)
                 {
-                    Shape shape = shapeFile.Shapes[header][element];
-                    TreeNode elementNode = new TreeNode(String.Format("Element {0} ({1}x{2})", elementId, shape.Width, shape.Height));
-                    elementNode.Tag = shape;
-                    sectionNode.Nodes.Add(elementNode);
-                    elementId++;
+                    Shape shape = section.Shapes[j];
+
+                    TreeNode shapeNode = new TreeNode(String.Format("Shape {0} ({1}x{2})", j, shape.Width, shape.Height));
+                    shapeNode.Tag = shape;
+                    sectionNode.Nodes.Add(shapeNode);
+                }
+            }
+
+            VisualisePalette();
+        }
+
+        public void VisualisePalette()
+        {
+            Bitmap b = new Bitmap(256 * 4, 4 * 3, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            
+            for (int i = 0; i < Palette.Entries.Length; i++)
+            {
+                PaletteColor paletteColor = Palette.Entries[i];
+                Color color = Color.FromArgb(paletteColor.Attributes, paletteColor.Red, paletteColor.Green, paletteColor.Blue);
+
+                int col = i;
+                int row = 0;
+                if (i >= 256)
+                {
+                    col = i - 256;
+                    row = 1;
+                }
+                if (i >= 512)
+                {
+                    col = i - 512;
+                    row = 2;
                 }
 
-                headerId++;
+                int x1 = col * 4;
+                int y1 = row * 4;
+
+                for (int x = x1; x < x1 + 4; x++)
+                {
+                    for (int y = y1; y < y1 + 4; y++)
+                    {
+                        b.SetPixel(x, y, color);
+                    }
+                }
             }
+
+            ImageOutput.Image = b;
         }
 
         public void Render()
         {
-            if (PaletteList.SelectedItem != null && ShapeTree.SelectedNode != null)
+            if (ShapeTree.SelectedNode == null || ShapeTree.SelectedNode.Tag == null || !(ShapeTree.SelectedNode.Tag is Shape))
+                return;
+
+            Shape shape = (Shape)ShapeTree.SelectedNode.Tag;
+
+            if (shape.Width == 0 || shape.Height == 0)
+                return;
+
+            Bitmap bitmap = new Bitmap(shape.Width, shape.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            Graphics g = Graphics.FromImage(bitmap);
+            g.Clear(Color.Black);
+            for (int x = 0; x < shape.Width; x++)
             {
-                if (!(PaletteList.SelectedItem is Palette) || !(ShapeTree.SelectedNode.Tag is Shape))
+                for (int y = 0; y < shape.Height; y++)
                 {
-                    return;
-                }
+                    int pixel = x + (y*shape.Width);
+                    byte paletteEntryIndex = shape.Data[pixel];
+                    PaletteColor paletteColor = Palette.Entries[paletteEntryIndex + 0];
+                    Color color = Color.FromArgb(paletteColor.Red, paletteColor.Green, paletteColor.Blue);
 
-                Palette palette = (Palette)PaletteList.SelectedItem;
-                Shape shape = (Shape)ShapeTree.SelectedNode.Tag;
-
-                try
-                {
-                    Bitmap bitmap = new Bitmap(shape.Width, shape.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
-                    for (int x = 0; x < shape.Width; x++)
-                    {
-                        for (int y = 0; y < shape.Height; y++)
-                        {
-                            int pixel = x * y;
-                            byte paletteEntryIndex = shape.Data[pixel];
-                            PaletteColor paletteColor = palette.Entries[paletteEntryIndex];
-                            Color color = Color.FromArgb(paletteColor.Red, paletteColor.Green, paletteColor.Blue);
-
-                            bitmap.SetPixel(x, y, color);
-                        }
-                    }
-
-                    ImageOutput.Image = bitmap;
-                }
-                catch
-                {
+                    bitmap.SetPixel(x, y, color);
                 }
             }
+
+            ImageOutput.Image = bitmap;
         }
 
         private void ShapeTree_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            Render();
-        }
-
-        private void PaletteList_SelectedIndexChanged(object sender, EventArgs e)
         {
             Render();
         }

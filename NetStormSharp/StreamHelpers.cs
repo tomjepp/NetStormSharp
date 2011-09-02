@@ -25,6 +25,11 @@ namespace NetStormSharp
         #endregion
 
         #region Signed integer helpers
+        public static SByte ReadInt8(this Stream stream)
+        {
+            return (SByte)stream.ReadByte();
+        }
+
         public static Int16 ReadInt16(this Stream stream)
         {
             byte[] data = new byte[2];

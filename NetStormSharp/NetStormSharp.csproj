@@ -43,7 +43,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shapes\Palette.cs" />
     <Compile Include="Shapes\PaletteColor.cs" />
-    <Compile Include="Shapes\PaletteHeader.cs" />
+    <Compile Include="Shapes\Section.cs" />
     <Compile Include="Shapes\SectionHeader.cs" />
     <Compile Include="Shapes\SectionElement.cs" />
     <Compile Include="Shapes\Shape.cs" />

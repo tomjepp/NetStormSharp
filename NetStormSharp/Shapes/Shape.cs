@@ -6,8 +6,8 @@ namespace NetStormSharp.Shapes
 {
     public class Shape
     {
-        private ushort m_Height;
         private ushort m_Width;
+        private ushort m_Height;
 
         private short m_OriginX;
         private short m_OriginY;
@@ -19,19 +19,19 @@ namespace NetStormSharp.Shapes
 
         private byte[] m_Data;
 
-        public ushort Height
-        {
-            get
-            {
-                return m_Height;
-            }
-        }
-
         public ushort Width
         {
             get
             {
                 return m_Width;
+            }
+        }
+
+        public ushort Height
+        {
+            get
+            {
+                return m_Height;
             }
         }
 
@@ -91,20 +91,11 @@ namespace NetStormSharp.Shapes
             }
         }
 
-        private void AdvancePixel(ref int currentX, ref int currentY)
-        {
-            currentX++;
-            if (currentX == m_Width)
-            {
-                currentY++;
-                currentX = 0;
-            }
-        }
-
         public Shape(Stream stream)
         {
-            m_Width = stream.ReadUInt16();
             m_Height = stream.ReadUInt16();
+            m_Width = stream.ReadUInt16();
+
             m_OriginX = stream.ReadInt16();
             m_OriginY = stream.ReadInt16();
 
@@ -118,61 +109,92 @@ namespace NetStormSharp.Shapes
             try
             {
                 m_Data = new byte[m_Height * m_Width];
-                int currentX = 0;
-                int currentY = 0;
-
-                while (currentY < m_Width)
+                for (int i = 0; i < m_Data.Length; i++)
                 {
-                    byte firstByte = stream.ReadUInt8();
-                    byte secondByte = stream.ReadUInt8();
-                    if (firstByte == 0 && secondByte > 0x02)
-                    {
-                        // Absolute mode
-
-                        for (int count = 0; count < secondByte; count++)
-                        {
-                            byte colorIndex = stream.ReadUInt8();
-                            m_Data[currentX * currentY] = colorIndex;
-                            AdvancePixel(ref currentX, ref currentY);
-                        }
-                    }
-                    else if (firstByte == 0 && secondByte < 0x03)
-                    {
-                        // Escape mode
-                        if (secondByte == 0)
-                        {
-                            // End of line
-                            currentY++;
-                            currentX = 0;
-                        }
-                        else if (secondByte == 1)
-                        {
-                            // End of bitmap
-                            break;
-                        }
-                        else if (secondByte == 2)
-                        {
-                            // Delta
-                            byte deltaX = stream.ReadUInt8();
-                            byte deltaY = stream.ReadUInt8();
-                            currentX += deltaX;
-                            currentY += deltaY;
-                        }
-                    }
-                    else
-                    {
-                        // Encoded mode
-
-                        for (int count = 0; count < firstByte; count++)
-                        {
-                            m_Data[currentX * currentY] = secondByte;
-                            AdvancePixel(ref currentX, ref currentY);
-                        }
-                    }
+                    m_Data[i] = 0;
                 }
             }
             catch
             {
+                return;
+            }
+
+            if (m_Data.Length == 0)
+                return;
+
+            try
+            {
+                uint linesCount = 0;
+                uint lineChar = 0;
+
+                while (linesCount < m_Height)
+                {
+                    byte packetType = stream.ReadUInt8();
+
+                    if (packetType == 0)
+                    {
+                        if (lineChar == 0)
+                            continue;
+
+                        // End line
+                        ++linesCount;
+                        lineChar = 0;
+                    }
+                    else if (packetType == 1)
+                    {
+                        // Skip token
+                        byte nSkip = stream.ReadUInt8();
+                        lineChar += nSkip;
+                    }
+                    else if ((packetType & 1) != 0)
+                    {
+                        // String token
+                        byte stringLen = (byte)((packetType - 1) / 2);
+                        if (stringLen < (m_Width - lineChar))
+                        {
+                            uint startOffset = linesCount * m_Width + lineChar;
+                            for (int i = 0; i < stringLen; i++)
+                            {
+                                byte b = stream.ReadUInt8();
+                                m_Data[startOffset + i] = b;
+                            }
+                            lineChar += stringLen;
+                        }
+                        else
+                        {
+                            lineChar = 0;
+                            ++linesCount;
+
+                            for (int i = 0; i < stringLen; i++)
+                            {
+                                byte b = stream.ReadUInt8();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Run token
+
+                        byte runCopy = (byte)(packetType / 2);
+                        byte data = stream.ReadUInt8();
+                        for (int i = 0; i < runCopy; ++i)
+                        {
+                            uint index = linesCount * m_Width + lineChar++;
+                            if (index < m_Width * m_Height)
+                                m_Data[index] = data;
+                        }
+                    }
+
+                    while (lineChar > m_Width)
+                    {
+                        lineChar -= m_Width;
+                        ++linesCount;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error while decoding: {0}", e);
             }
         }
     }
