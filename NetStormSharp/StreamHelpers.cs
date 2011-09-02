@@ -25,6 +25,13 @@ namespace NetStormSharp
         #endregion
 
         #region Signed integer helpers
+        public static Int16 ReadInt16(this Stream stream)
+        {
+            byte[] data = new byte[2];
+            stream.Read(data, 0, 2);
+            return BitConverter.ToInt16(data, 0);
+        }
+
         public static Int32 ReadInt32(this Stream stream)
         {
             byte[] data = new byte[4];
@@ -34,6 +41,18 @@ namespace NetStormSharp
         #endregion
 
         #region Unsigned integer helpers
+        public static Byte ReadUInt8(this Stream stream)
+        {
+            return (byte)stream.ReadByte();
+        }
+
+        public static UInt16 ReadUInt16(this Stream stream)
+        {
+            byte[] data = new byte[2];
+            stream.Read(data, 0, 2);
+            return BitConverter.ToUInt16(data, 0);
+        }
+
         public static UInt32 ReadUInt32(this Stream stream)
         {
             byte[] data = new byte[4];

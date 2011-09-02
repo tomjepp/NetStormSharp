@@ -6,61 +6,57 @@ namespace NetStormSharp.Shapes
 {
     public class ShapeFile
     {
+        private Dictionary<SectionHeader, Dictionary<SectionElement, Shape>> m_Shapes;
+        public Dictionary<SectionHeader, Dictionary<SectionElement, Shape>> Shapes
+        {
+            get
+            {
+                return m_Shapes;
+            }
+        }
+
         public ShapeFile(Stream stream)
         {
-            uint highestOffset = 0;
-            uint sectionCount = 0;
-            uint elementCount = 0;
-            List<uint> offsets = new List<uint>();
+            m_Shapes = new Dictionary<SectionHeader, Dictionary<SectionElement, Shape>>();
             while (true)
             {
                 SectionHeader header = stream.ReadStruct<SectionHeader>();
 
                 if (header.Version != 0x30312e31)
-                    break;
+                   break;
 
-                sectionCount++;
-
-                uint sectionStartCount = elementCount;
+                if (!m_Shapes.ContainsKey(header))
+                    m_Shapes.Add(header, new Dictionary<SectionElement, Shape>());
 
                 for (int i = 0; i < header.ElementCount; i++)
                 {
                     SectionElement element = stream.ReadStruct<SectionElement>();
-                    Console.WriteLine("{0:X8} {1:X8}", element.Offset, element.Unknown1);
 
-                    if (element.Offset > highestOffset)
-                        highestOffset = element.Offset;
-
-                    elementCount++;
-
-                    offsets.Add(element.Offset);
+                    if (!m_Shapes[header].ContainsKey(element))
+                        m_Shapes[header].Add(element, null);
 
                     if (element.Unknown1 != 0)
                         System.Diagnostics.Debugger.Break();
                 }
-                uint sectionTotal = elementCount - sectionStartCount;
-                Console.WriteLine("Section {0} count: {1}", sectionCount, sectionTotal);
             }
 
-            Console.WriteLine("{0:X}", stream.Position);
-
-            Console.WriteLine("Section count: {0}", sectionCount);
-            Console.WriteLine("Element count: {0}", elementCount);
-            Console.WriteLine("Highest offset: {0:X}", highestOffset);
-
-            offsets.Sort();
-
-            for (int i = 0; i < offsets.Count; i++)
+            SectionHeader[] headers = new SectionHeader[m_Shapes.Count];
+            m_Shapes.Keys.CopyTo(headers, 0);
+            for (int i = 0; i < m_Shapes.Count; i++)
             {
-                uint lastOffset = 0;
-                uint offset = offsets[i];
+                SectionHeader header = headers[i];
 
-                if (i > 1)
+                SectionElement[] elements = new SectionElement[m_Shapes[header].Count];
+                m_Shapes[header].Keys.CopyTo(elements, 0);
+
+                for (int j = 0; j < m_Shapes[header].Count; j++)
                 {
-                    lastOffset = offsets[i - 1];
-                    Console.WriteLine("Size: {0:X}", offset - lastOffset);
+                    SectionElement element = elements[j];
+
+                    Console.WriteLine("Seeking to: {0}", element.Offset);
+                    stream.Seek(element.Offset, SeekOrigin.Begin);
+                    m_Shapes[header][element] = new Shape(stream);
                 }
-                Console.Write("Offset: {0:X} ", offset);
             }
 
             stream.Dispose();

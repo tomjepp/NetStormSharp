@@ -8,6 +8,8 @@ namespace NetStormSharp.Shapes
     {
         private PaletteColor[] m_Entries;
 
+        private string m_Name;
+
         public PaletteColor[] Entries
         {
             get
@@ -16,9 +18,10 @@ namespace NetStormSharp.Shapes
             }
         }
 
-        public Palette(Stream stream)
+        public Palette(Stream stream, string name)
         {
             PaletteHeader header = stream.ReadStruct<PaletteHeader>();
+            m_Name = name;
 
             if (header.ID != 0xB123)
                 throw new Exception("Unable to load palette. ID != 0xB123.");
@@ -36,6 +39,11 @@ namespace NetStormSharp.Shapes
             }
 
             stream.Dispose();
+        }
+
+        public override string ToString()
+        {
+            return m_Name;
         }
     }
 }

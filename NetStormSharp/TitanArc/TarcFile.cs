@@ -23,6 +23,14 @@ namespace NetStormSharp.TitanArc
             m_Key = key;
         }
 
+        public TarcFileEntry[] Files
+        {
+            get
+            {
+                return m_Files;
+            }
+        }
+
         public TarcFile(Stream stream)
         {
             m_Stream = stream;
