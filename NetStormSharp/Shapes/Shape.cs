@@ -124,46 +124,46 @@ namespace NetStormSharp.Shapes
 
             try
             {
-                uint linesCount = 0;
-                uint lineChar = 0;
+                uint currentX = 0;
+                uint currentY = 0;
 
-                while (linesCount < m_Height)
+                while (currentY < m_Height)
                 {
                     byte packetType = stream.ReadUInt8();
 
                     if (packetType == 0)
                     {
-                        if (lineChar == 0)
+                        if (currentX == 0)
                             continue;
 
                         // End line
-                        ++linesCount;
-                        lineChar = 0;
+                        currentY++;
+                        currentX = 0;
                     }
                     else if (packetType == 1)
                     {
                         // Skip token
                         byte nSkip = stream.ReadUInt8();
-                        lineChar += nSkip;
+                        currentX += nSkip;
                     }
                     else if ((packetType & 1) != 0)
                     {
                         // String token
                         byte stringLen = (byte)((packetType - 1) / 2);
-                        if (stringLen < (m_Width - lineChar))
+                        if (stringLen < (m_Width - currentX))
                         {
-                            uint startOffset = linesCount * m_Width + lineChar;
+                            uint startOffset = currentY * m_Width + currentX;
                             for (int i = 0; i < stringLen; i++)
                             {
                                 byte b = stream.ReadUInt8();
                                 m_Data[startOffset + i] = b;
                             }
-                            lineChar += stringLen;
+                            currentX += stringLen;
                         }
                         else
                         {
-                            lineChar = 0;
-                            ++linesCount;
+                            currentX = 0;
+                            ++currentY;
 
                             for (int i = 0; i < stringLen; i++)
                             {
@@ -179,16 +179,16 @@ namespace NetStormSharp.Shapes
                         byte data = stream.ReadUInt8();
                         for (int i = 0; i < runCopy; ++i)
                         {
-                            uint index = linesCount * m_Width + lineChar++;
+                            uint index = currentY * m_Width + currentX++;
                             if (index < m_Width * m_Height)
                                 m_Data[index] = data;
                         }
                     }
 
-                    while (lineChar > m_Width)
+                    while (currentX > m_Width)
                     {
-                        lineChar -= m_Width;
-                        ++linesCount;
+                        currentX -= m_Width;
+                        ++currentY;
                     }
                 }
             }
