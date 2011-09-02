@@ -90,7 +90,7 @@ namespace TestApp
             if (shape.Width == 0 || shape.Height == 0)
                 return;
 
-            Bitmap bitmap = new Bitmap(shape.Width, shape.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            Bitmap bitmap = new Bitmap(shape.Width, shape.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             Graphics g = Graphics.FromImage(bitmap);
             g.Clear(Color.Black);
             for (int x = 0; x < shape.Width; x++)
@@ -100,13 +100,25 @@ namespace TestApp
                     int pixel = x + (y*shape.Width);
                     byte paletteEntryIndex = shape.Data[pixel];
                     PaletteColor paletteColor = Palette.Entries[paletteEntryIndex + 0];
-                    Color color = Color.FromArgb(paletteColor.Red, paletteColor.Green, paletteColor.Blue);
+                    Color color = Color.FromArgb(paletteColor.Attributes, paletteColor.Red, paletteColor.Green, paletteColor.Blue);
 
                     bitmap.SetPixel(x, y, color);
                 }
             }
 
-            ImageOutput.Image = bitmap;
+            int drawWindowWidth = shape.MaxX - shape.MinX;
+            int drawWindowHeight = shape.MaxY - shape.MinY;
+            Console.WriteLine("Draw window: {0}x{1} size: {2}x{3}", shape.OriginX, shape.OriginY, drawWindowWidth, drawWindowHeight);
+            //g.DrawRectangle(new Pen(Color.White), 0, 0, drawWindowWidth, drawWindowHeight);
+
+            Bitmap drawBitmap = new Bitmap(drawWindowWidth, drawWindowHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            Graphics drawGraphics = Graphics.FromImage(drawBitmap);
+            drawGraphics.DrawImageUnscaledAndClipped(bitmap, new Rectangle(0, 0, drawWindowWidth, drawWindowHeight));
+
+            g.Dispose();
+            bitmap.Dispose();
+
+            ImageOutput.Image = drawBitmap;
         }
 
         private void ShapeTree_AfterSelect(object sender, TreeViewEventArgs e)
