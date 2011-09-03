@@ -7,7 +7,7 @@ namespace NetStormSharp.Shapes
     public struct PaletteColor
     {
         [FieldOffset(0x00)]
-        public byte Attributes;
+        public byte Alpha;
         [FieldOffset(0x01)]
         public byte Red;
         [FieldOffset(0x02)]
