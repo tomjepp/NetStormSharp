@@ -17,7 +17,7 @@ namespace NetStormSharp.Shapes
         private int m_MaxX;
         private int m_MaxY;
 
-        private byte[] m_Data;
+        private byte[,] m_Data;
 
         public ushort Width
         {
@@ -82,13 +82,24 @@ namespace NetStormSharp.Shapes
                 return m_MaxY;
             }
         }
-
-        public byte[] Data
+        public byte[,] Data
         {
             get
             {
                 return m_Data;
             }
+        }
+
+        private uint m_CurrentX;
+        private uint m_CurrentY;
+        private void WriteByte(byte b)
+        {
+           if (m_CurrentY >= m_Height || m_CurrentX >= m_Width)
+               return;
+
+           m_Data[m_CurrentY, m_CurrentX] = b;
+
+            m_CurrentX++;
         }
 
         public Shape(Stream stream)
@@ -108,11 +119,7 @@ namespace NetStormSharp.Shapes
 
             try
             {
-                m_Data = new byte[m_Height * m_Width];
-                for (int i = 0; i < m_Data.Length; i++)
-                {
-                    m_Data[i] = 0;
-                }
+                m_Data = new byte[m_Height, m_Width];
             }
             catch
             {
@@ -124,71 +131,52 @@ namespace NetStormSharp.Shapes
 
             try
             {
-                uint currentX = 0;
-                uint currentY = 0;
-
-                while (currentY < m_Height)
+                while (m_CurrentY < m_Height)
                 {
+                    if (stream.Position == stream.Length)
+                        break;
                     byte packetType = stream.ReadUInt8();
 
                     if (packetType == 0)
                     {
-                        if (currentX == 0)
-                            continue;
-
-                        // End line
-                        currentY++;
-                        currentX = 0;
+                        uint toWrite = m_Width - m_CurrentX;
+                        // new line
+                        for (int i = 0; i < toWrite; i++)
+                        {
+                            WriteByte(0xff);
+                        }
+                        m_CurrentY++;
+                        m_CurrentX = 0;
                     }
                     else if (packetType == 1)
                     {
                         // Skip token
                         byte nSkip = stream.ReadUInt8();
-                        currentX += nSkip;
+                        for (int i = 0; i < nSkip; i++)
+                        {
+                            WriteByte(0xff);
+                        }
                     }
                     else if ((packetType & 1) != 0)
                     {
                         // String token
-                        byte stringLen = (byte)((packetType - 1) / 2);
-                        if (stringLen < (m_Width - currentX))
+                        byte stringLen = (byte)((packetType >> 1));
+                        for (int i = 0; i < stringLen; i++)
                         {
-                            uint startOffset = currentY * m_Width + currentX;
-                            for (int i = 0; i < stringLen; i++)
-                            {
-                                byte b = stream.ReadUInt8();
-                                m_Data[startOffset + i] = b;
-                            }
-                            currentX += stringLen;
-                        }
-                        else
-                        {
-                            currentX = 0;
-                            ++currentY;
-
-                            for (int i = 0; i < stringLen; i++)
-                            {
-                                byte b = stream.ReadUInt8();
-                            }
+                            byte b = stream.ReadUInt8();
+                            WriteByte(b);
                         }
                     }
                     else
                     {
                         // Run token
 
-                        byte runCopy = (byte)(packetType / 2);
+                        byte runCopy = (byte)((packetType >> 1));
                         byte data = stream.ReadUInt8();
                         for (int i = 0; i < runCopy; ++i)
                         {
-                            uint index = currentY * m_Width + currentX++;
-                            if (index < m_Width * m_Height)
-                                m_Data[index] = data;
+                            WriteByte(data);
                         }
-                    }
-
-                    while (currentX > m_Width)
-                    {
-                        currentX -= m_Width;
-                        ++currentY;
                     }
                 }
             }
