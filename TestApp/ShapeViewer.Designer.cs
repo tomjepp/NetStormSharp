@@ -58,7 +58,7 @@
             // 
             // ImageOutput
             // 
-            this.ImageOutput.BackColor = System.Drawing.Color.White;
+            this.ImageOutput.BackColor = System.Drawing.Color.CornflowerBlue;
             this.ImageOutput.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ImageOutput.Location = new System.Drawing.Point(0, 0);
             this.ImageOutput.Name = "ImageOutput";
