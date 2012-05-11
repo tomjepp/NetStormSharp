@@ -92,7 +92,14 @@ namespace TestApp
             if (shape.Width == 0 || shape.Height == 0)
                 return;
 
-            Bitmap bitmap = new Bitmap(shape.Width, shape.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            int drawWindowWidth = shape.MaxX - shape.MinX;
+            int drawWindowHeight = shape.MaxY - shape.MinY;
+            Console.WriteLine("Draw window: {0}x{1} size: {2}x{3}", shape.OriginX, shape.OriginY, drawWindowWidth, drawWindowHeight);
+
+            Bitmap drawBitmap = new Bitmap(drawWindowWidth, drawWindowHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            using (Bitmap bitmap = new Bitmap(shape.Width, shape.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+            {
                 using (Graphics g = Graphics.FromImage(bitmap))
                 {
                     g.Clear(Color.CornflowerBlue);
@@ -100,29 +107,23 @@ namespace TestApp
                     {
                         for (int y = 0; y < shape.Height; y++)
                         {
-                            int pixel = x + (y * shape.Width);
-                            byte paletteEntryIndex = shape.Data[pixel];
+                            byte paletteEntryIndex = shape.Data[y, x];
                             PaletteColor paletteColor = Palette.Entries[paletteEntryIndex];
                             Color color = Color.FromArgb(paletteColor.Red, paletteColor.Green, paletteColor.Blue);
+
+                            //if (paletteEntryIndex == 0)
+                                //continue;
 
                             bitmap.SetPixel(x, y, color);
                         }
                     }
 
-                    int drawWindowWidth = shape.MaxX - shape.MinX;
-                    int drawWindowHeight = shape.MaxY - shape.MinY;
-                    Console.WriteLine("Draw window: {0}x{1} size: {2}x{3}", shape.OriginX, shape.OriginY, drawWindowWidth, drawWindowHeight);
-                    g.DrawRectangle(new Pen(Color.White), 0, 0, drawWindowWidth, drawWindowHeight);
+                    Graphics drawGraphics = Graphics.FromImage(drawBitmap);
+                    drawGraphics.DrawImageUnscaledAndClipped(bitmap, new Rectangle(0, 0, drawWindowWidth, drawWindowHeight));
 
-                    //Bitmap drawBitmap = new Bitmap(drawWindowWidth, drawWindowHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                    //Graphics drawGraphics = Graphics.FromImage(drawBitmap);
-                    //drawGraphics.DrawImageUnscaledAndClipped(bitmap, new Rectangle(0, 0, drawWindowWidth, drawWindowHeight));
-
-                    ImageOutput.Image = bitmap;
+                    ImageOutput.Image = drawBitmap;
                 }
-
-            //ImageOutput.Image = drawBitmap;
-            
+            }
         }
 
         private void ShapeTree_AfterSelect(object sender, TreeViewEventArgs e)
