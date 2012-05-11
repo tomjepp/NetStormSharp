@@ -96,6 +96,12 @@ namespace TestApp
             int drawWindowHeight = shape.MaxY - shape.MinY;
             Console.WriteLine("Draw window: {0}x{1} size: {2}x{3}", shape.OriginX, shape.OriginY, drawWindowWidth, drawWindowHeight);
 
+            if (drawWindowHeight == 0 || drawWindowWidth == 0)
+            {
+                drawWindowHeight = shape.Height;
+                drawWindowWidth = shape.Width;
+            }
+
             Bitmap drawBitmap = new Bitmap(drawWindowWidth, drawWindowHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
             using (Bitmap bitmap = new Bitmap(shape.Width, shape.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
@@ -108,13 +114,17 @@ namespace TestApp
                         for (int y = 0; y < shape.Height; y++)
                         {
                             byte paletteEntryIndex = shape.Data[y, x];
-                            PaletteColor paletteColor = Palette.Entries[paletteEntryIndex];
-                            Color color = Color.FromArgb(paletteColor.Red, paletteColor.Green, paletteColor.Blue);
-
-                            //if (paletteEntryIndex == 0)
-                                //continue;
-
-                            bitmap.SetPixel(x, y, color);
+                            if (paletteEntryIndex == 255)
+                            {
+                                Color color = Color.FromArgb(0, 255, 255, 255);
+                                bitmap.SetPixel(x, y, color);
+                            }
+                            else
+                            {
+                                PaletteColor paletteColor = Palette.Entries[paletteEntryIndex];
+                                Color color = Color.FromArgb(paletteColor.Red, paletteColor.Green, paletteColor.Blue);
+                                bitmap.SetPixel(x, y, color);
+                            }
                         }
                     }
 
@@ -129,6 +139,18 @@ namespace TestApp
         private void ShapeTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
             Render();
+        }
+
+        private void ExportButton_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = ExportSaveDialog.ShowDialog();
+            if (dr == System.Windows.Forms.DialogResult.OK)
+            {
+                if (File.Exists(ExportSaveDialog.FileName))
+                    File.Delete(ExportSaveDialog.FileName);
+
+                ImageOutput.Image.Save(ExportSaveDialog.FileName);
+            }
         }
     }
 }

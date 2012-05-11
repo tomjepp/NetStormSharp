@@ -29,8 +29,10 @@
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.ImageOutput = new System.Windows.Forms.PictureBox();
             this.ShapeTree = new System.Windows.Forms.TreeView();
+            this.ImageOutput = new System.Windows.Forms.PictureBox();
+            this.ExportButton = new System.Windows.Forms.Button();
+            this.ExportSaveDialog = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -51,10 +53,20 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.ExportButton);
             this.splitContainer1.Panel2.Controls.Add(this.ImageOutput);
             this.splitContainer1.Size = new System.Drawing.Size(481, 454);
             this.splitContainer1.SplitterDistance = 160;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // ShapeTree
+            // 
+            this.ShapeTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ShapeTree.Location = new System.Drawing.Point(0, 0);
+            this.ShapeTree.Name = "ShapeTree";
+            this.ShapeTree.Size = new System.Drawing.Size(160, 454);
+            this.ShapeTree.TabIndex = 0;
+            this.ShapeTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.ShapeTree_AfterSelect);
             // 
             // ImageOutput
             // 
@@ -67,14 +79,21 @@
             this.ImageOutput.TabIndex = 2;
             this.ImageOutput.TabStop = false;
             // 
-            // ShapeTree
+            // ExportButton
             // 
-            this.ShapeTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ShapeTree.Location = new System.Drawing.Point(0, 0);
-            this.ShapeTree.Name = "ShapeTree";
-            this.ShapeTree.Size = new System.Drawing.Size(160, 454);
-            this.ShapeTree.TabIndex = 0;
-            this.ShapeTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.ShapeTree_AfterSelect);
+            this.ExportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ExportButton.Location = new System.Drawing.Point(220, 419);
+            this.ExportButton.Name = "ExportButton";
+            this.ExportButton.Size = new System.Drawing.Size(85, 23);
+            this.ExportButton.TabIndex = 3;
+            this.ExportButton.Text = "Export to PNG";
+            this.ExportButton.UseVisualStyleBackColor = true;
+            this.ExportButton.Click += new System.EventHandler(this.ExportButton_Click);
+            // 
+            // ExportSaveDialog
+            // 
+            this.ExportSaveDialog.DefaultExt = "png";
+            this.ExportSaveDialog.Filter = "PNG files|*.png|All files|*.*";
             // 
             // ShapeViewer
             // 
@@ -98,6 +117,8 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TreeView ShapeTree;
         private System.Windows.Forms.PictureBox ImageOutput;
+        private System.Windows.Forms.Button ExportButton;
+        private System.Windows.Forms.SaveFileDialog ExportSaveDialog;
 
 
     }

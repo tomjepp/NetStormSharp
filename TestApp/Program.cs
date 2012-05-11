@@ -12,6 +12,7 @@ namespace TestApp
 {
     class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
 //            Console.BufferHeight = Int16.MaxValue - 1;
