@@ -45,12 +45,14 @@ namespace TestApp
 
         public void VisualisePalette()
         {
-            Bitmap b = new Bitmap(256 * 4, 4 * 3, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
-            
+            Bitmap b = new Bitmap((256 * 4) + 32, (4 * 3) + 32, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            Graphics g = Graphics.FromImage(b);
+            g.Clear(Color.CornflowerBlue);
             for (int i = 0; i < Palette.Entries.Length; i++)
             {
                 PaletteColor paletteColor = Palette.Entries[i];
-                Color color = Color.FromArgb(paletteColor.Attributes, paletteColor.Red, paletteColor.Green, paletteColor.Blue);
+                Color color = Color.FromArgb(paletteColor.Red, paletteColor.Green, paletteColor.Blue);
+                //Color color = Color.FromArgb(paletteColor.Alpha, paletteColor.Red, paletteColor.Green, paletteColor.Blue);
 
                 int col = i;
                 int row = 0;
@@ -65,8 +67,8 @@ namespace TestApp
                     row = 2;
                 }
 
-                int x1 = col * 4;
-                int y1 = row * 4;
+                int x1 = (col * 4) + 16;
+                int y1 = (row * 4) + 16;
 
                 for (int x = x1; x < x1 + 4; x++)
                 {
@@ -91,34 +93,36 @@ namespace TestApp
                 return;
 
             Bitmap bitmap = new Bitmap(shape.Width, shape.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            Graphics g = Graphics.FromImage(bitmap);
-            g.Clear(Color.Black);
-            for (int x = 0; x < shape.Width; x++)
-            {
-                for (int y = 0; y < shape.Height; y++)
+                using (Graphics g = Graphics.FromImage(bitmap))
                 {
-                    int pixel = x + (y*shape.Width);
-                    byte paletteEntryIndex = shape.Data[pixel];
-                    PaletteColor paletteColor = Palette.Entries[paletteEntryIndex + 0];
-                    Color color = Color.FromArgb(paletteColor.Attributes, paletteColor.Red, paletteColor.Green, paletteColor.Blue);
+                    g.Clear(Color.CornflowerBlue);
+                    for (int x = 0; x < shape.Width; x++)
+                    {
+                        for (int y = 0; y < shape.Height; y++)
+                        {
+                            int pixel = x + (y * shape.Width);
+                            byte paletteEntryIndex = shape.Data[pixel];
+                            PaletteColor paletteColor = Palette.Entries[paletteEntryIndex];
+                            Color color = Color.FromArgb(paletteColor.Red, paletteColor.Green, paletteColor.Blue);
 
-                    bitmap.SetPixel(x, y, color);
+                            bitmap.SetPixel(x, y, color);
+                        }
+                    }
+
+                    int drawWindowWidth = shape.MaxX - shape.MinX;
+                    int drawWindowHeight = shape.MaxY - shape.MinY;
+                    Console.WriteLine("Draw window: {0}x{1} size: {2}x{3}", shape.OriginX, shape.OriginY, drawWindowWidth, drawWindowHeight);
+                    g.DrawRectangle(new Pen(Color.White), 0, 0, drawWindowWidth, drawWindowHeight);
+
+                    //Bitmap drawBitmap = new Bitmap(drawWindowWidth, drawWindowHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    //Graphics drawGraphics = Graphics.FromImage(drawBitmap);
+                    //drawGraphics.DrawImageUnscaledAndClipped(bitmap, new Rectangle(0, 0, drawWindowWidth, drawWindowHeight));
+
+                    ImageOutput.Image = bitmap;
                 }
-            }
 
-            int drawWindowWidth = shape.MaxX - shape.MinX;
-            int drawWindowHeight = shape.MaxY - shape.MinY;
-            Console.WriteLine("Draw window: {0}x{1} size: {2}x{3}", shape.OriginX, shape.OriginY, drawWindowWidth, drawWindowHeight);
-            //g.DrawRectangle(new Pen(Color.White), 0, 0, drawWindowWidth, drawWindowHeight);
-
-            Bitmap drawBitmap = new Bitmap(drawWindowWidth, drawWindowHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            Graphics drawGraphics = Graphics.FromImage(drawBitmap);
-            drawGraphics.DrawImageUnscaledAndClipped(bitmap, new Rectangle(0, 0, drawWindowWidth, drawWindowHeight));
-
-            g.Dispose();
-            bitmap.Dispose();
-
-            ImageOutput.Image = drawBitmap;
+            //ImageOutput.Image = drawBitmap;
+            
         }
 
         private void ShapeTree_AfterSelect(object sender, TreeViewEventArgs e)

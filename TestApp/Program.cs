@@ -20,7 +20,7 @@ namespace TestApp
             using (FileStream fs = new FileStream(@"C:\NetStorm\netstorm.tarc", FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 TarcFile tarcFile = new TarcFile(fs);
-                using (Stream stream = tarcFile.GetStream(@"\d\!color.dat"))
+                using (Stream stream = tarcFile.GetStream(@"\d\gifcloud.col"))
                 {
                     palette = new Palette(stream);
                 }
