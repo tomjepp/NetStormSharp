@@ -18,15 +18,14 @@ namespace NetStormSharp.Shapes
         public ShapeFile(Stream stream)
         {
             m_Sections = new List<Section>();
-            int shapeId = 0;
+        
             while (true)
             {
                 long headerOffset = stream.Position;
-                SectionHeader header = stream.ReadStruct<SectionHeader>();
+                TypeHeader header = stream.ReadStruct<TypeHeader>();
 
                 if (header.Version != 0x30312e31)
                    break;
-
                 Section section = new Section(header, headerOffset, stream);
                 m_Sections.Add(section);
             }

@@ -4,12 +4,12 @@ using System.Runtime.InteropServices;
 namespace NetStormSharp.Shapes
 {
     [StructLayout(LayoutKind.Explicit, Size = 0x08)]
-    public struct SectionElement
+    public struct TypeHeader
     {
         [FieldOffset(0x00)]
-        public uint Offset;
+        public uint Version;
 
         [FieldOffset(0x04)]
-        public uint Unknown1;
+        public uint FrameCount;
     }
 }

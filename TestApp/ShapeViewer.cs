@@ -27,14 +27,14 @@ namespace TestApp
             {
                 Section section = shapeFile.Sections[i];
 
-                TreeNode sectionNode = new TreeNode(String.Format("Section {0}", i));
+                TreeNode sectionNode = new TreeNode(String.Format("Type {0}", i));
                 ShapeTree.Nodes.Add(sectionNode);
 
                 for (int j = 0; j < section.Shapes.Count; j++)
                 {
                     Shape shape = section.Shapes[j];
 
-                    TreeNode shapeNode = new TreeNode(String.Format("Shape {0} ({1}x{2})", j, shape.Width, shape.Height));
+                    TreeNode shapeNode = new TreeNode(String.Format("Frame {0} ({1}x{2})", j, shape.Width, shape.Height));
                     shapeNode.Tag = shape;
                     sectionNode.Nodes.Add(shapeNode);
                 }
@@ -94,6 +94,8 @@ namespace TestApp
 
             int drawWindowWidth = shape.MaxX - shape.MinX;
             int drawWindowHeight = shape.MaxY - shape.MinY;
+            //int drawWindowWidth = shape.Width;
+            //int drawWindowHeight = shape.Height;
             Console.WriteLine("Draw window: {0}x{1} size: {2}x{3}", shape.OriginX, shape.OriginY, drawWindowWidth, drawWindowHeight);
 
             if (drawWindowHeight == 0 || drawWindowWidth == 0)
