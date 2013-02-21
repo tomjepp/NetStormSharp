@@ -15,13 +15,13 @@ namespace NetStormSharp.Shapes
             }
         }
 
-        public Section(SectionHeader header, long sectionHeaderOffset, Stream stream)
+        public Section(TypeHeader header, long sectionHeaderOffset, Stream stream)
         {
             m_Shapes = new List<Shape>();
-            for (int i = 0; i < header.ElementCount; i++)
+            for (int i = 0; i < header.FrameCount; i++)
             {
                 long elementOffset = stream.Position;
-                SectionElement element = stream.ReadStruct<SectionElement>();
+                FrameHeader element = stream.ReadStruct<FrameHeader>();
 
                 long oldPos = stream.Position;
 
@@ -30,8 +30,8 @@ namespace NetStormSharp.Shapes
                 m_Shapes.Add(shape);
                 stream.Seek(oldPos, SeekOrigin.Begin);
 
-                if (element.Unknown1 != 0)
-                    System.Diagnostics.Debugger.Break();
+                if (element.ColorTable != 0)
+                    throw new Exception("Unknown color table: " + element.ColorTable.ToString());
             }
         }
     }

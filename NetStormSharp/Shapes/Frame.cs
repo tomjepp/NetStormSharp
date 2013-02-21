@@ -90,6 +90,18 @@ namespace NetStormSharp.Shapes
             }
         }
 
+        public int OriginalOffset
+        {
+            get;
+            set;
+        }
+
+        public int OriginalFinish
+        {
+            get;
+            set;
+        }
+
         private uint m_CurrentX;
         private uint m_CurrentY;
         private void WriteByte(byte b)
@@ -97,13 +109,15 @@ namespace NetStormSharp.Shapes
            if (m_CurrentY >= m_Height || m_CurrentX >= m_Width)
                return;
 
-           m_Data[m_CurrentY, m_CurrentX] = b;
+            m_Data[m_CurrentY, m_CurrentX] = b;
 
             m_CurrentX++;
         }
 
         public Shape(Stream stream)
         {
+            OriginalOffset = (int)stream.Position;
+
             m_Height = stream.ReadUInt16();
             m_Width = stream.ReadUInt16();
 
@@ -179,10 +193,13 @@ namespace NetStormSharp.Shapes
                         }
                     }
                 }
+
+                OriginalFinish = (int)stream.Position;
             }
             catch (Exception e)
             {
                 Console.WriteLine("Error while decoding: {0}", e);
+                throw;
             }
         }
     }
