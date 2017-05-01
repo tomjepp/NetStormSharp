@@ -69,7 +69,7 @@ namespace NetStormSharp.TitanArc
         {
             for (int i = 0; i < m_Files.Length; i++)
             {
-                if (m_Files[i].Filename == filename)
+                if (m_Files[i].Filename.ToLowerInvariant() == filename.ToLowerInvariant())
                     return true;
             }
 
@@ -102,7 +102,7 @@ namespace NetStormSharp.TitanArc
         {
             for (int i = 0; i < m_Files.Length; i++)
             {
-                if (m_Files[i].Filename == filename)
+                if (m_Files[i].Filename.ToLowerInvariant() == filename.ToLowerInvariant())
                     return m_Files[i];
             }
 
