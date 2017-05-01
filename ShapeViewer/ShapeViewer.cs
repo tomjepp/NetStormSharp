@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
+using NetStormSharp;
 using NetStormSharp.Shapes;
 
 namespace ShapeViewer
@@ -27,7 +28,9 @@ namespace ShapeViewer
             {
                 Section section = shapeFile.Sections[i];
 
-                TreeNode sectionNode = new TreeNode(String.Format("Type {0}", i));
+                UnitType type = (UnitType)i;
+
+                TreeNode sectionNode = new TreeNode(String.Format("Type {0} ({1})", type, i));
                 ShapeTree.Nodes.Add(sectionNode);
 
                 for (int j = 0; j < section.Shapes.Count; j++)

@@ -7,6 +7,7 @@ using System.Windows.Forms;
 
 using System.Drawing;
 
+using NetStormSharp;
 using NetStormSharp.TitanArc;
 using NetStormSharp.Shapes;
 
@@ -59,7 +60,7 @@ namespace ShapeViewer
             {
                 ShapeFile shapeFile = new ShapeFile(fs);
 
-                Directory.CreateDirectory("out");
+                /*Directory.CreateDirectory("out");
 
                 for (int i = 0; i < shapeFile.Sections.Count; i++)
                 {
@@ -88,7 +89,7 @@ namespace ShapeViewer
                             }
                         }
                     }
-                }
+                }*/
                 ShapeViewer viewer = new ShapeViewer(shapeFile, palette);
                 Application.Run(viewer);
             }

@@ -53,6 +53,7 @@
     <Compile Include="TitanArc\TarcFile.cs" />
     <Compile Include="TitanArc\TarcFileEntry.cs" />
     <Compile Include="TitanArc\TarcHeader.cs" />
+    <Compile Include="UnitType.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
